@@ -1,0 +1,38 @@
+Process Statistics:
+	Restaurant 0 prepared 2 requests
+	Restaurant 1 prepared 0 requests
+	Restaurant 2 prepared 0 requests
+	Restaurant 3 prepared 0 requests
+	Restaurant 4 prepared 0 requests
+	Driver 0 delivered 1 requests
+	Driver 1 delivered 1 requests
+	Driver 2 delivered 0 requests
+	Driver 3 delivered 0 requests
+	Driver 4 delivered 0 requests
+	Client 0 received 2 requests
+	Client 1 received 0 requests
+	Client 2 received 0 requests
+	Client 3 received 0 requests
+	Client 4 received 0 requests
+
+Request Statistics:
+Request: 0
+Status: C
+Restaurant ID: 0
+Driver ID: 0
+Client ID: 0
+Created: 2022-05-27 13:41:02.645
+Restaurant time: 2022-05-27 13:41:02.645
+Driver time: 2022-05-27 13:41:02.645
+Client time (end): 2022-05-27 13:41:02.645
+Total time: 0.000
+Request: 1
+Status: C
+Restaurant ID: 0
+Driver ID: 1
+Client ID: 0
+Created: 2022-05-27 13:41:10.373
+Restaurant time: 2022-05-27 13:41:10.373
+Driver time: 2022-05-27 13:41:10.373
+Client time (end): 2022-05-27 13:41:10.373
+Total time: 0.000
