@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="pt_PT">
+	
+<head>
+   <meta charset="UTF-8">
+   <title>Home</title>
+</head>
+
+<body>	
+	<h1 th:text="'Olá, ' + ${session.cidadao.name} + '!'" />
+	
+	<form action="#" th:action="@{/votacoesEmCurso}" method="get">
+		<input type="submit" value="Votações em Curso"></input>
+	</form>
+	
+	<button>Votações Passadas</button>
+	
+	<form action="#" th:action="@{/votosDelegados}" method="get">
+		<input type="submit" value="Votos de Delegados"></input>
+	</form>
+	
+	<form action="#" th:action="@{/projetosLei}" method="get">
+		<input type="submit" value="Projetos Lei"></input>
+	</form>
+	
+	<form action="#" th:action="@{/escolherDelegado}" method="get">
+		<input type="submit" value="Escolher Delegado"></input>
+	</form>
+	
+	<button th:unless="${isDelegado}" th:text="'Apresentar como Delegado'"></button>
+	
+	<br th:unless="${isDelegado}">
+	
+	<br th:unless="${isDelegado}">
+	
+	<form th:if="${isDelegado}" action="#"  th:action="@{/criarProjetoLei}" method="get">
+		<input type="submit" value="Criar Projeto Lei"></input>
+	</form>
+	
+	<br th:if="${isDelegado}">
+	
+	<button onclick="history.back()">Logout</button>
+</body>
+
+</html>
