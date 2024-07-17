@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<!56278 - Henrique Catarino>
+<!56338 - Miguel Nunes>
+<!56303 - Tomás Piteira>
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <title>Sistema Solar</title>
+    <script src="twgl.js-master/dist/5.x/twgl-full.js"></script>
+</head>
+<body>
+
+    <canvas id="canvas" width="1280" height="720" style="background: url('texturesCG69/spaceCG69.jpg')"></canvas>
+
+    <script id="gouraud-vs" type="notjs">
+        attribute vec4 position;
+        attribute vec3 normal;
+        attribute vec2 texcoord;
+
+        uniform mat4 u_worldViewProjection;
+        uniform mat4 u_world;
+        uniform mat4 u_worldInverseTranspose;
+
+        varying vec3 normalInterp;
+        varying vec3 v_pos;
+
+        uniform vec4 u_ambient;
+        uniform vec4 u_lightColor;
+        uniform vec3 u_lightWorldPos;
+        uniform sampler2D u_diffuse;
+        uniform float u_shininess;
+
+        varying vec4 color;
+
+        void main(){
+            vec4 v_pos4 = u_world * position;
+            v_pos = vec3(v_pos4) / v_pos4.w;
+            normalInterp = vec3(u_worldInverseTranspose * vec4(normal, 0.0));
+            gl_Position = u_worldViewProjection * position;
+
+            vec3 N = normalize(normalInterp);
+            vec3 L = normalize(u_lightWorldPos - v_pos);
+            float lambertian = max(dot(N, L), 0.0);
+            vec4 diffuseColor = texture2D(u_diffuse, texcoord);
+            color = vec4((u_ambient * diffuseColor + lambertian * diffuseColor).rgb,
+                         diffuseColor.a);
+        }
+    </script>
+
+    <script id="gouraud-fs" type="notjs">
+            precision mediump float;
+
+            varying vec4 color;
+
+            void main() {
+                gl_FragColor = color;
+            }
+    </script>
+
+    <script id="phong-vs" type="notjs">
+        // phong shading vs
+        attribute vec4 position;
+        attribute vec3 normal;
+        attribute vec2 texcoord;
+
+        uniform mat4 u_worldViewProjection;
+        uniform mat4 u_world;
+        uniform mat4 u_viewInverse;
+        uniform mat4 u_worldInverseTranspose;
+        uniform vec3 u_lightWorldPos;
+
+        varying vec4 v_position;
+        varying vec3 v_normal;
+        varying vec3 v_surfaceToLight;
+        varying vec3 v_surfaceToView;
+        varying vec2 v_texCoord;
+
+        void main() {
+            v_texCoord = texcoord;
+            v_position = u_worldViewProjection * position;
+            v_normal = (u_worldInverseTranspose * vec4(normal, 0)).xyz;
+
+            v_surfaceToLight = u_lightWorldPos - (u_world * position).xyz;
+            v_surfaceToView = (u_viewInverse[3] - (u_world * position)).xyz;
+
+            gl_Position = v_position;
+        }
+    </script>
+
+    <script id="phong-fs" type="notjs">
+        // phong shading fs
+        precision mediump float;
+
+        uniform vec4 u_lightColor;
+        uniform vec4 u_ambient;
+        uniform vec4 u_specular;
+        uniform sampler2D u_diffuse;
+        uniform float u_shininess;
+        uniform float u_specularFactor;
+
+        varying vec4 v_position;
+        varying vec3 v_normal;
+        varying vec3 v_surfaceToLight;
+        varying vec3 v_surfaceToView;
+        varying vec2 v_texCoord;
+
+        vec4 lit(float l ,float h, float m) {
+            return vec4(1.0, max(l, 0.0), (l > 0.0) ? pow(max(0.0, h), m) : 0.0, 1.0);
+        }
+
+        void main() {
+            vec4 diffuseColor = texture2D(u_diffuse, v_texCoord);
+            vec3 a_normal = normalize(v_normal);
+            vec3 surfaceToLight = normalize(v_surfaceToLight);
+            vec3 surfaceToView = normalize(v_surfaceToView);
+
+            vec3 halfVector = normalize(v_surfaceToLight + v_surfaceToView);
+
+            vec4 litR = lit(dot(a_normal, surfaceToLight),
+                dot(a_normal, halfVector), u_shininess);
+
+            vec4 outColor = vec4((
+                u_lightColor * (diffuseColor * litR.y + diffuseColor * u_ambient +
+                u_specular * litR.z * u_specularFactor)).rgb,
+                diffuseColor.a);
+
+            gl_FragColor = outColor;
+        }
+    </script>
+
+    <script>
+        const m4 = twgl.m4;
+        const gl = document.querySelector("canvas").getContext("webgl");
+        const programInfo = twgl.createProgramInfo(gl, ["phong-vs", "phong-fs"]);
+        //const programInfo = twgl.createProgramInfo(gl, ["gouraud-vs", "gouraud-fs"]);
+
+        const objects = [
+            twgl.primitives.createSphereBufferInfo(gl, 2, 100, 100),
+            twgl.primitives.createSphereBufferInfo(gl, 0.2, 100, 100),
+            twgl.primitives.createSphereBufferInfo(gl, 0.3, 100, 100),
+            twgl.primitives.createSphereBufferInfo(gl, 0.4, 100, 100),
+            twgl.primitives.createSphereBufferInfo(gl, 0.7, 100, 100),
+            twgl.primitives.createSphereBufferInfo(gl, 0.1, 100, 100)
+        ]
+            
+        const uniforms = [
+            sunUniforms = {},
+            p1Uniforms = {},
+            p2Uniforms = {},
+            p3Uniforms = {},
+            p4Uniforms = {},
+            moonUniforms = {}
+        ]
+
+        const textures = [
+            twgl.createTexture(gl, {src:'texturesCG69/sunCG69.jpg'}),
+            twgl.createTexture(gl, {src:'texturesCG69/p1CG69.jpg'}),
+            twgl.createTexture(gl, {src:'texturesCG69/p2CG69.webp'}),
+            twgl.createTexture(gl, {src:'texturesCG69/p3CG69.jpeg'}),
+            twgl.createTexture(gl, {src:'texturesCG69/p4CG69.jpg'}),
+            twgl.createTexture(gl, {src:'texturesCG69/moonCG69.jpeg'})
+        ]
+
+        for (let i = 0; i < uniforms.length; i++) {
+            uniforms[i].u_lightWorldPos = [0, 0, 0];
+            uniforms[i].u_lightColor = [1, 1, 1, 1];
+            uniforms[i].u_specular = [0.01, 0.01, 0.01, 1];
+            uniforms[i].u_shininess = 5;
+            uniforms[i].u_specularFactor = 20;
+            uniforms[i].u_diffuse = textures[i];
+            uniforms[i].u_world = m4.identity();
+            uniforms[i].u_worldViewProjection = m4.identity();
+        }
+
+        uniforms[0].u_ambient = [1, 1, 1, 1]
+        for (let i = 1; i < uniforms.length; i++) {
+            uniforms[i].u_ambient = [0.25, 0.25, 0.25, 1]
+        }
+
+        function degrees_to_radians(degrees) {
+            return degrees * Math.PI / 180;
+        }
+
+        function render(time) {
+            time *= 0.001
+            //time = 39.9
+
+            twgl.resizeCanvasToDisplaySize(gl.canvas);
+            gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
+
+            gl.enable(gl.DEPTH_TEST);
+            gl.enable(gl.CULL_FACE);
+            gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+
+            const fov = 30 * Math.PI / 180;
+            const aspect = gl.canvas.clientWidth / gl.canvas.clientHeight;
+            const zNear = 1;
+            const zFar = 100;
+            const projection = m4.perspective(fov, aspect, zNear, zFar);
+
+            const eye = [0, 5, -20]
+            const target = [0, 0, 0];
+            const up = [0, 1, 0];
+            const camera = m4.lookAt(eye, target, up);
+            const view = m4.inverse(camera);
+
+            const viewProjection = m4.multiply(projection, view);
+
+            uniforms[0].u_world = m4.rotationY(time * degrees_to_radians(360) / 25);
+            uniforms[1].u_world = m4.multiply(
+                m4.multiply(m4.rotationY(time * degrees_to_radians(360) / 5), m4.translation([3, 0, 0])),
+                m4.rotationY(time * degrees_to_radians(360) / 58));
+            uniforms[2].u_world = m4.multiply(
+                m4.multiply(m4.rotationY(time * degrees_to_radians(360) / -15), m4.translation([4.5, 0, 0])),
+                m4.rotationY(time * degrees_to_radians(360) / -116));
+            uniforms[3].u_world = m4.multiply(
+                m4.multiply(m4.rotationY(time * degrees_to_radians(360) / 25), m4.translation([6, 0, 0])),
+                m4.rotationY(time * degrees_to_radians(360)));
+            uniforms[4].u_world = m4.multiply(
+                m4.multiply(m4.rotationY(time * degrees_to_radians(360) / 50), m4.translation([8, 0, 0])),
+                m4.rotationY(time * degrees_to_radians(360)));
+            uniforms[5].u_world = m4.multiply(
+                m4.multiply(m4.rotationY(time * degrees_to_radians(360) / 25), m4.translation([6, 0, 0])),
+                m4.multiply(m4.rotationY(time * degrees_to_radians(360) / -5), m4.translation([1, 0, 0])),
+                m4.rotationY(time * degrees_to_radians(360)));
+
+            gl.useProgram(programInfo.program);
+
+            for (let i = 0; i < objects.length; i++){
+                uniforms[i].u_viewInverse = camera;
+                uniforms[i].u_worldInverseTranspose = m4.transpose(m4.inverse(uniforms[i].u_world));
+                uniforms[i].u_worldViewProjection = m4.multiply(viewProjection, uniforms[i].u_world);
+                twgl.setBuffersAndAttributes(gl, programInfo, objects[i]);
+                twgl.setUniforms(programInfo, uniforms[i]);
+                twgl.drawBufferInfo(gl, objects[i]);
+            }
+
+            requestAnimationFrame(render);
+        }
+
+        requestAnimationFrame(render);
+
+    </script>
+
+</body>
