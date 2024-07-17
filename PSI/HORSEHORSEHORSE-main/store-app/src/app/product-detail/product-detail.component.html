@@ -1,0 +1,22 @@
+<h1>{{ product.name }}</h1>
+
+<div class="product-detail">
+  <div class="product-image">
+    <img src="{{ product.imageUrl }}" alt="{{ product.name }}">
+    <div class="additional-images">
+      <img *ngFor="let image of product.otherImages" src="{{ image }}" alt="{{ product.name }}">
+    </div>
+  </div>
+
+  <div class="product-details">
+    <div class="product-type">Type: {{ productType }}</div>
+    <div class="product-platform">Platform: {{ platform }}</div>
+    <div class="product-languages">Languages: {{ languages }}</div>
+    <div class="product-price">Price: {{ price | currency }}</div>
+    <div class="product-rating">Rating: {{ rating }}</div>
+    <div class="product-description">{{ description }}</div>
+    <div class="product-video">
+      <a href="{{ video }}">Watch Video</a>
+    </div>
+  </div>
+</div>

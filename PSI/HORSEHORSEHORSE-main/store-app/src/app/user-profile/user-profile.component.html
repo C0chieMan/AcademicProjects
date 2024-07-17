@@ -1,0 +1,38 @@
+<div class="user-profile-container">
+  <div class="profile-body">
+    <img [src]="user.imageProfile" alt="Profile Image" class="profile-image">
+
+    <h2 *ngIf="!isEditingUsername">{{ user.username }}</h2>
+    <div *ngIf="isEditingUsername" class="input-group">
+      <input type="text" [(ngModel)]="newUsername" class="form-control">
+      <div class="input-group-append">
+        <button class="btn btn-primary" (click)="updateUsername()">Save</button>
+        <button class="btn btn-secondary" (click)="cancelUsernameEditing()">Cancel</button>
+      </div>
+    </div>
+    <button *ngIf="!isEditingUsername" class="btn btn-link" (click)="enableUsernameEditing()">Edit</button>
+
+    <div class="avatar-container">
+      <img src="assets/images/avatar1.jpeg" alt="Avatar 1" class="avatar" (click)="setAvatar('assets/images/avatar1.jpeg'); isAvatarUpdated = true">
+      <img src="assets/images/avatar2.jpeg" alt="Avatar 2" class="avatar" (click)="setAvatar('assets/images/avatar2.jpeg'); isAvatarUpdated = true">
+      <img src="assets/images/avatar3.jpeg" alt="Avatar 3" class="avatar" (click)="setAvatar('assets/images/avatar3.jpeg'); isAvatarUpdated = true">
+    </div>
+
+    <div *ngIf="isNameUpdated" class="alert alert-success" role="alert">
+      Name was updated with success.
+    </div>
+
+    <div *ngIf="isNameWrong" class="alert alert-forbidden" role="alert">
+      <p style="color:rgb(255,0,0);">Username must be at least three characters long and contain only alphanumeric characters</p>
+    </div>
+
+    <div *ngIf="isNameDuplicate" class="alert alert-forbidden" role="alert">
+      <p style="color:rgb(255,0,0);">Username already in use</p>
+    </div>
+
+    <div *ngIf="isAvatarUpdated" class="success-message" role="alert">
+      Avatar was updated with success.
+    </div>
+
+  </div>
+</div>

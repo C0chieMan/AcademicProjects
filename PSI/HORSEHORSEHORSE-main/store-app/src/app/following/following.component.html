@@ -1,0 +1,25 @@
+<div class="search-container">
+  <input type="text" placeholder="Search users..." [(ngModel)]="searchTerm" (input)="searchUsers()">
+  <button *ngIf="searchTerm" class="clear-button" (click)="searchTerm=''">Clear</button>
+</div>
+
+<div class ="no-results-message" *ngIf="filteredUsers.length === 0">No users found</div>
+
+<div class="container">
+  <div class="row">
+    <div *ngFor="let user of filteredUsers" class="col-md-4">
+      <div class="card mb-3">
+        <img src="{{user.imageProfile}}" class="card-img-top" alt="{{user.username}}">
+        <div class="card-body">
+          <h5 class="card-title">{{user.username}}</h5>
+          <div class="d-flex justify-content-between align-items-center">
+            <button class="btn btn-primary">Following</button>
+            <button class="btn btn-primary">Lists</button>
+            <button class="btn btn-primary" routerLink="/library/{{user.username}}">Library</button>
+            <button class="btn btn-primary" routerLink="/wishlist/{{user.username}}">Wishlist</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

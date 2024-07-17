@@ -1,0 +1,21 @@
+<h2>Login</h2>
+<div class="user-login-container">
+  <label for="usernameLog"><b>Username</b></label>
+  <input id="usernameLog" type="text" placeholder="Enter Username" name="usernameLog" #usernameLog>
+
+  <label for="pwdLog"><b>Password</b></label>
+  <input id="pwdLog" type="password" placeholder="Enter Password" name="pwdLog" #pwdLog>
+
+  <button type="button" (click)="login(usernameLog.value, pwdLog.value)">Login</button>
+</div>
+
+<h2>Register</h2>
+<div class="user-register-container">
+  <label for="usernameReg"><b>Username</b></label>
+  <input id="usernameReg" type="text" placeholder="Enter Username" name="usernameReg" #usernameReg>
+
+  <label for="pwdReg"><b>Password</b></label>
+  <input id="pwdReg" type="password" placeholder="Enter Password" name="pwdReg" #pwdReg>
+
+  <button type="button" (click)="register(usernameReg.value, pwdReg.value)">Register</button>
+</div>

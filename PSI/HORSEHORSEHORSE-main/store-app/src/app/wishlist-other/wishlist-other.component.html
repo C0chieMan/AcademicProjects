@@ -1,0 +1,21 @@
+<div class="wishlist-container">
+  <h2 *ngIf="user">{{ user.username }}'s Wishlist</h2>
+  <table>
+    <thead>
+    <tr>
+      <th>Product</th>
+      <th>Price</th>
+      <th>Details</th>
+    </tr>
+    </thead>
+    <tbody *ngIf="hasWishes()">
+    <tr *ngFor="let product of getProducts()">
+      <td *ngIf="product">{{ product.name }}</td>
+      <td *ngIf="product">{{ product.price | currency }}</td>
+      <td *ngIf="product"><button class="btn btn-primary" (click)="viewProductDetails(product._id)">View Details</button></td>
+    </tr>
+    </tbody>
+  </table>
+  <p *ngIf="!hasWishes() && user">{{ user.username }}'s wishlist is empty.</p>
+</div>
+
