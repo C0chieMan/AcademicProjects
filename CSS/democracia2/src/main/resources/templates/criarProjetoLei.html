@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="pt_PT">
+<head>
+    <meta charset="UTF-8">
+    <title>Criar Projeto de Lei</title>
+</head>
+<body>
+	<button onclick="history.back()">Go Back</button>
+    <h1>Criar Projeto de Lei</h1>
+    <form action="/criarProjetoLei" method="POST" enctype="multipart/form-data">
+        <label for="titulo">Título:</label>
+        <input type="text" id="titulo" name="titulo" required>
+        <br>
+        <label for="descricao">Descrição:</label>
+        <textarea id="descricao" name="descricao" required></textarea>
+        <br>
+        <label for="tema">Tema:</label>
+        <select id="tema" name="tema" required>
+            <option th:each="tema: ${temas}" th:value="${tema.id}" th:text="${tema.titulo}"></option>
+        </select>
+        <br>
+        <button type="submit">Criar Projeto de Lei</button>
+    </form>
+    <p th:text="${message}"></p>
+</body>
+</html>

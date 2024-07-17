@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="pt_PT">
+	
+<head>
+   <meta charset="UTF-8">
+   <title>Votar</title>
+</head>
+
+<body>
+	<button onclick="history.back()">Go Back</button>
+	<h1>Votar</h1>
+	<div>
+		<h2 th:text="'Votação ' + ${votacao.id} + ' - Projeto ' + ${projeto.id}  + ' - ' + ${titulo}"></h2>
+		<a th:href="@{/propostaLei(propostaId=${projeto.id})}">Detalhes do projeto</a>
+	</div>
+	<div th:if="${votou}">
+		<p>Voto já submetido</p>
+	</div>
+	<div th:unless="${votou}">
+		<span th:unless="${omissaoBranco}">
+			<p th:if="${omissao}">Voto por omissão: Favor</p>
+			<p th:unless="${omissao}">Voto por omissão: Contra</p>
+		</span>
+		<p th:if="${omissaoBranco}">Voto por omissão: Branco</p>
+		<form action="#" th:action="@{/votarVotacao}" method="post">
+			<input type="hidden" th:value="${votacao.id}" id="votacaoId" name="votacaoId">
+			<label for="voto">Voto:</label>
+        	<select id="voto" name="voto" required>
+				<option th:value="''" th:text="'Selecionar voto'" disabled selected></option>
+            	<option th:value="'Favor'" th:text="'Favor'"></option>
+            	<option th:value="'Contra'" th:text="'Contra'"></option>
+        	</select>
+        	<input type="submit" value="Submeter"></input>
+		</form>
+	</div>
+	
+</body>
+
+</html>
